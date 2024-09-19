@@ -7,6 +7,7 @@ import re
 
 CHAPTER_SIZE = 10 ** 12  # in pages
 PART_SIZE = (10 ** 12) * CHAPTER_SIZE  # in chapters
+COMPACT = False
 
 
 def right():
@@ -127,6 +128,7 @@ def format_scientific_notation(n):
 
 def first_page():
     global page
+    reduce = 6 if COMPACT else 0  # lines to remove if COMPACT mode enabled
     page.tag_configure("heading1", font=("David", 18, 'bold'), justify=CENTER)
     page.insert(0.0, f"\n\n\n{book_primary_title}", 'heading1')
 
@@ -139,7 +141,7 @@ def first_page():
         page.image_create('end', image=img)
 
     page.tag_configure("heading3", font=("David", 16), justify=CENTER)
-    page.insert('end', (10 if book_primary_title != "The Book of Nothing" else 16 - lines) * "\n" + "By\nThis computer", 'heading3')
+    page.insert('end', (10 - reduce if book_primary_title != "The Book of Nothing" else 16 - lines - reduce) * "\n" + "By\nThis computer", 'heading3')
 
 
 def get_current_page():
@@ -235,12 +237,14 @@ page_start_offset = 0
 
 master = Tk()
 # master.configure(bg='white')
+if COMPACT:
+    master.geometry('700x690')
 master.title("The Book of Everything")
-Label(master, text='Search anything: ').grid(row=0, padx=10, pady=50)
+Label(master, text='Search anything: ').grid(row=0, padx=10, pady=7 if COMPACT else 50)
 ttk.Button(master, text='Search', width=15, command=search).grid(row=0, column=2, padx=10)
 
 
-e1 = ttk.Entry(master, width=100)
+e1 = ttk.Entry(master, width=70 if COMPACT else 100)
 e1.bind('<Return>', on_search_enter)
 e1.grid(row=0, column=1)
 
@@ -268,11 +272,11 @@ check4 = ttk.Checkbutton(check_frame, text="Other characters", variable=var4, co
 check4.grid(row=4, column=0, sticky=W)
 
 
-page = Text(master, width=62, height=37, borderwidth=10, wrap=CHAR, pady=30)
-page.configure(font=("David", 12))
+page = Text(master, width=62, height=33.5 if COMPACT else 37, borderwidth=10, wrap=CHAR, pady=30)
+page.configure(font=("David", 11 if COMPACT else 12))
 page.tag_configure('center', justify=CENTER)
 page.configure(inactiveselectbackground=page.cget("selectbackground"))
-page.grid(row=1, column=1, pady=(0, 20))
+page.grid(row=1, column=1, pady=(0, 5 if COMPACT else 20))
 
 
 img = ImageTk.PhotoImage(Image.open("The book of everything logo.png").resize((120, 120)))
@@ -283,7 +287,7 @@ img = ImageTk.PhotoImage(Image.open("The book of everything logo.png").resize((1
 page_no_value = StringVar()
 page_no = ttk.Entry(master, textvariable=page_no_value, justify=CENTER)
 page_no.bind('<Return>', page_no_update)
-page_no.grid(row=2, column=1, pady=(0, 20))
+page_no.grid(row=2, column=1, pady=(0, 5 if COMPACT else 20))
 
 
 nav_frame = Frame(master)
