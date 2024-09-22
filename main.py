@@ -3,11 +3,13 @@ from PIL import ImageTk, Image
 from reform import *
 from tkinter import ttk
 import re
+from sys import set_int_max_str_digits
 
 
 CHAPTER_SIZE = 10 ** 12  # in pages
 PART_SIZE = (10 ** 12) * CHAPTER_SIZE  # in chapters
-COMPACT = False
+COMPACT = True
+set_int_max_str_digits(100000)
 
 
 def right():
